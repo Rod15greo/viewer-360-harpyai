@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerar Imagem 360°</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="/">Panorama 360°</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">Início</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/transcribe">Transcrever Áudio</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/viewer">Visualizador 360°</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container text-center welcome-container">
+        <div class="jumbotron">
+            <h1 class="display-4">Gerando Imagem 360°</h1>
+            <p class="lead">Prompt: {{ prompt }}</p>
+            <hr class="my-4">
+            <div id="loading">
+                <p>Gerando sua imagem 360°, por favor aguarde...</p>
+            </div>
+            <div id="result" style="display: none;">
+                <img id="generatedImage" src="" alt="Imagem Gerada" class="img-fluid">
+                <br>
+                <a id="downloadLink" class="btn btn-success btn-lg" href="#" download="result.png">Baixar Imagem</a>
+                <a id="viewerLink" class="btn btn-primary btn-lg" href="/viewer">Ver no Visualizador 360°</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const prompt = "{{ prompt }}";
+            fetch("/generate_image", {
+                method: "POST",
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ prompt: prompt })
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById("loading").style.display = 'none';
+                document.getElementById("result").style.display = 'block';
+                document.getElementById("generatedImage").src = '/' + data.image_path;
+                document.getElementById("downloadLink").href = '/' + data.image_path;
+            });
+        });
+    </script>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
