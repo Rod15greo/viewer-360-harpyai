@@ -39,7 +39,11 @@
             <button class="btn btn-primary btn-lg" onclick="startRecording()">Gravar</button>
             <button class="btn btn-danger btn-lg" onclick="stopRecording()" disabled>Parar</button>
             <h2>Transcrição</h2>
-            <p id="transcription"></p>
+            <form id="transcriptionForm" action="/generate" method="POST">
+                <input type="hidden" id="transcription" name="transcription">
+                <p id="transcriptionText"></p>
+                <button type="submit" class="btn btn-success btn-lg" style="display: none;">Continuar</button>
+            </form>
         </div>
     </div>
 
@@ -70,7 +74,9 @@
                         })
                         .then(response => response.json())
                         .then(data => {
-                            document.getElementById("transcription").innerText = data.transcription;
+                            document.getElementById("transcription").value = data.transcription;
+                            document.getElementById("transcriptionText").innerText = data.transcription;
+                            document.querySelector("button[type='submit']").style.display = 'block';
                         });
 
                         audioChunks = [];
